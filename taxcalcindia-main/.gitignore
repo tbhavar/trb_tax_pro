@@ -1,0 +1,14 @@
+*.pyc
+validation.py
+__pycache__/
+taxcalcindia.egg-info/
+build/
+dist/
+.vscode/
+poetry.lock
+.coverage
+.DS_Store
+_build
+_static
+_templates
+.taxcalcvenv

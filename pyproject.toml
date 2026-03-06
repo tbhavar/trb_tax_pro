@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=61.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "trb_tax_pro"
+version = "1.0.0"
+description = "A CA-grade Income Tax calculation engine for India (FY 2025-26) with AIS reconciliation and support for the Income Tax Act, 2025."
+readme = "README.md"
+authors = [
+    { name = "Tanmay Rajendra Bhavar (Chartered Accountant, TRB & Co)", email = "catanmaybhavar@gmail.com" }
+]
+requires-python = ">=3.10"
+dependencies = [
+    "pydantic>=2.0.0",
+    "streamlit>=1.20.0",
+    "pandas>=2.0.0"
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Topic :: Office/Business :: Financial :: Accounting",
+    "Intended Audience :: Financial and Insurance Industry",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+Source = "https://github.com/yourusername/trb_tax_pro"
+Funding = "https://buymeacoffee.com/tbhavar"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "mypy>=1.0.0"
+]

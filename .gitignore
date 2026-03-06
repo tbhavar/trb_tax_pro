@@ -1,0 +1,20 @@
+# Ignore sensitive user data (AIS files, mock payloads, etc)
+*.json
+
+# ALWAYS include the structural architecture JSON files 
+!trb_tax_pro/config/surcharge_matrix.json
+
+# Environments
+venv/
+env/
+.env
+
+# Python specific caching
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+
+# System files
+.DS_Store
+Thumbs.db

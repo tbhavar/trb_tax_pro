@@ -1,0 +1,44 @@
+{
+    "fy2023_24": {
+        "old_regime": [
+            {"threshold": 5000000, "rate": 0.10},
+            {"threshold": 10000000, "rate": 0.15},
+            {"threshold": 20000000, "rate": 0.25},
+            {"threshold": 50000000, "rate": 0.37}
+        ],
+        "new_regime": [
+            {"threshold": 5000000, "rate": 0.10},
+            {"threshold": 10000000, "rate": 0.15},
+            {"threshold": 20000000, "rate": 0.25},
+            {"threshold": 50000000, "rate": 0.25}
+        ]
+    },
+    "fy2024_25": {
+        "old_regime": [
+            {"threshold": 5000000, "rate": 0.10},
+            {"threshold": 10000000, "rate": 0.15},
+            {"threshold": 20000000, "rate": 0.25},
+            {"threshold": 50000000, "rate": 0.37}
+        ],
+        "new_regime": [
+            {"threshold": 5000000, "rate": 0.10},
+            {"threshold": 10000000, "rate": 0.15},
+            {"threshold": 20000000, "rate": 0.25},
+            {"threshold": 50000000, "rate": 0.25}
+        ]
+    },
+    "fy2025_26": {
+        "old_regime": [
+            {"threshold": 5000000, "rate": 0.10},
+            {"threshold": 10000000, "rate": 0.15},
+            {"threshold": 20000000, "rate": 0.25},
+            {"threshold": 50000000, "rate": 0.37}
+        ],
+        "new_regime": [
+            {"threshold": 5000000, "rate": 0.10},
+            {"threshold": 10000000, "rate": 0.15},
+            {"threshold": 20000000, "rate": 0.25},
+            {"threshold": 50000000, "rate": 0.25}
+        ]
+    }
+}
