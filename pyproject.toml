@@ -25,7 +25,7 @@ classifiers = [
 ]
 
 [project.urls]
-Source = "https://github.com/yourusername/trb_tax_pro"
+Source = "https://github.com/tbhavar/trb_tax_pro"
 Funding = "https://buymeacoffee.com/tbhavar"
 
 [project.optional-dependencies]

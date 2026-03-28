@@ -18,7 +18,7 @@ Currently optimized via `pyproject.toml` and standard `pip` execution:
 
 1. **Clone the Repository:**
    ```bash
-   git clone https://github.com/yourusername/trb_tax_pro.git
+   git clone https://github.com/tbhavar/trb_tax_pro.git
    cd trb_tax_pro
    ```
 2. **Install Locally:**
