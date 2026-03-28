@@ -1,9 +1,9 @@
 Metadata-Version: 2.4
 Name: trb_tax_pro
-Version: 1.0.0
+Version: 1.0.1
 Summary: A CA-grade Income Tax calculation engine for India (FY 2025-26) with AIS reconciliation and support for the Income Tax Act, 2025.
 Author-email: "Tanmay Rajendra Bhavar (Chartered Accountant, TRB & Co)" <catanmaybhavar@gmail.com>
-Project-URL: Source, https://github.com/yourusername/trb_tax_pro
+Project-URL: Source, https://github.com/tbhavar/trb_tax_pro
 Project-URL: Funding, https://buymeacoffee.com/tbhavar
 Classifier: Programming Language :: Python :: 3
 Classifier: License :: OSI Approved :: MIT License
@@ -41,7 +41,7 @@ Currently optimized via `pyproject.toml` and standard `pip` execution:
 
 1. **Clone the Repository:**
    ```bash
-   git clone https://github.com/yourusername/trb_tax_pro.git
+   git clone https://github.com/tbhavar/trb_tax_pro.git
    cd trb_tax_pro
    ```
 2. **Install Locally:**
