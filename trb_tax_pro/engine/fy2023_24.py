@@ -1,48 +1,44 @@
-from typing import Dict, Any
+from typing import Dict, Any, List, Tuple
 from .base import TaxEngine
 from .dispatcher import MultiYearDispatcher
 from ..utils.rebate import Rebate87A
 from ..utils.marginal_relief import MarginalReliefCalculator
 
-@MultiYearDispatcher.register("ty2026")
-class FY2026_27Engine(TaxEngine):
+@MultiYearDispatcher.register("fy2023_24")
+class FY2023_24Engine(TaxEngine):
     """
-    Concrete Tax Engine for Tax Year 2026 (FY 2026-27).
-    Implements standard deduction of ₹75,000 and Section 87A Marginal Rebate for ₹12 Lakhs limit.
-    Includes special handling for Share Buyback proceeds u/s the Income Tax Act, 2025.
+    Concrete Tax Engine for Financial Year 2023-24.
+    New Regime becomes default. Standard Deduction of ₹50k introduced for New Regime.
+    Rebate 87A increased to ₹7L for New Regime.
     """
 
     @property
     def financial_year(self) -> str:
-        return "ty2026"
+        return "fy2023_24"
 
     def _calculate_base_tax_new_regime(self, taxable_income: float) -> float:
-        """Calculates base tax using FY 2026-27 New Regime Slabs."""
+        """Calculates base tax using FY 2023-24 New Regime Slabs."""
         tax = 0.0
-        if taxable_income <= 400000:
+        if taxable_income <= 300000:
             return 0.0
         
-        # Slabs for FY 26-27 (aligned with Finance Act 2025/2026 projections): 
-        # 0-4L: Nil
-        # 4-8L: 5%
-        # 8-12L: 10%
-        # 12-16L: 15%
-        # 16-20L: 20%
-        # 20-24L: 25%
-        # Above 24L: 30%
-        
-        if taxable_income > 400000:
-            tax += (min(taxable_income, 800000) - 400000) * 0.05
-        if taxable_income > 800000:
-            tax += (min(taxable_income, 1200000) - 800000) * 0.10
+        # Slabs:
+        # 0-3L: Nil
+        # 3-6L: 5%
+        # 6-9L: 10%
+        # 9-12L: 15%
+        # 12-15L: 20%
+        # > 15L: 30%
+        if taxable_income > 300000:
+            tax += (min(taxable_income, 600000) - 300000) * 0.05
+        if taxable_income > 600000:
+            tax += (min(taxable_income, 900000) - 600000) * 0.10
+        if taxable_income > 900000:
+            tax += (min(taxable_income, 1200000) - 900000) * 0.15
         if taxable_income > 1200000:
-            tax += (min(taxable_income, 1600000) - 1200000) * 0.15
-        if taxable_income > 1600000:
-            tax += (min(taxable_income, 2000000) - 1600000) * 0.20
-        if taxable_income > 2000000:
-            tax += (min(taxable_income, 2400000) - 2000000) * 0.25
-        if taxable_income > 2400000:
-            tax += (taxable_income - 2400000) * 0.30
+            tax += (min(taxable_income, 1500000) - 1200000) * 0.20
+        if taxable_income > 1500000:
+            tax += (taxable_income - 1500000) * 0.30
             
         return tax
 
@@ -64,7 +60,7 @@ class FY2026_27Engine(TaxEngine):
         regime = models_data.get("regime", "new_regime")
         
         # 1. Apply Standard Deduction
-        standard_deduction = 75000.0 if regime == "new_regime" else 50000.0
+        standard_deduction = 50000.0 # Same for both in FY 23-24
         taxable_income = max(0.0, gross_income - standard_deduction)
         
         # 2. Base Tax Calculation
@@ -72,41 +68,24 @@ class FY2026_27Engine(TaxEngine):
             base_tax = self._calculate_base_tax_new_regime(taxable_income)
         else:
             base_tax = self._calculate_base_tax_old_regime(taxable_income)
-        
-        # 3. Buyback proceeds (Special handling for Tax Year 2026)
-        # Share buyback treated as Capital Gains instead of Dividends
-        buyback_proceeds = models_data.get("buyback_proceeds", 0.0)
-        buyback_type = models_data.get("buyback_type", "individual")
-        buyback_tax = 0.0
-        if buyback_proceeds > 0:
-            if buyback_type == "promoter":
-                buyback_tax = buyback_proceeds * 0.30
-            elif buyback_type == "company":
-                buyback_tax = buyback_proceeds * 0.22
-            else:
-                buyback_tax = buyback_proceeds * 0.125
-        
-        computed_tax = base_tax + buyback_tax
-        
-        # 4. Section 87A Rebate & Marginal Rebate
+            
+        # 3. Section 87A Rebate
         rebate = 0.0
         if regime == "new_regime":
-            rebate_threshold = 1200000.0
-            max_rebate = 60000.0 
             rebate = Rebate87A.calculate(
                 taxable_income=taxable_income,
-                computed_tax=computed_tax,
+                computed_tax=base_tax,
                 regime=regime,
-                threshold=rebate_threshold,
-                max_rebate=max_rebate
+                threshold=700000.0,
+                max_rebate=25000.0
             )
-        elif regime == "old_regime":
+        else:
             if taxable_income <= 500000:
-                rebate = min(computed_tax, 12500.0)
+                rebate = min(base_tax, 12500.0)
         
-        tax_after_rebate = max(0.0, computed_tax - rebate)
+        tax_after_rebate = max(0.0, base_tax - rebate)
         
-        # 5. Surcharge and Marginal Relief
+        # 4. Surcharge and Marginal Relief
         surcharge_rates = [
             (5000000, 0.10),
             (10000000, 0.15),
@@ -126,18 +105,14 @@ class FY2026_27Engine(TaxEngine):
         surcharge_result = mr_calculator.calculate(taxable_income, tax_after_rebate, tax_func)
         
         final_surcharge = surcharge_result["final_surcharge"]
-        
-        # 6. Health and Education Cess (4%)
         tax_before_cess = tax_after_rebate + final_surcharge
         cess = round(tax_before_cess * 0.04, 2)
-        
         total_tax = round(tax_before_cess + cess, 2)
             
         return {
             "financial_year": self.financial_year,
             "taxable_income": taxable_income,
             "base_tax": base_tax,
-            "buyback_tax": buyback_tax,
             "rebate_87A": rebate,
             "tax_after_rebate": tax_after_rebate,
             "surcharge": final_surcharge,
