@@ -3,8 +3,8 @@ requires = ["setuptools>=61.0.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "trb_tax_pro"
-version = "1.1.0"
+name = "trb-tax-pro"
+version = "1.1.2"
 description = "A CA-grade Income Tax calculation engine for India (FY 2025-26) with AIS reconciliation and support for the Income Tax Act, 2025."
 readme = "README.md"
 authors = [
