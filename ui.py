@@ -2,10 +2,15 @@ import streamlit as st
 import pandas as pd
 import sys
 import os
+import json
 
 # Ensure the parent directory is in the path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '.')))
 
+# Import all engine modules to ensure they are registered with the dispatcher
+from trb_tax_pro.engine import (
+    fy2020_21, fy2021_22, fy2022_23, fy2023_24, fy2024_25, fy2025_26, fy2026_27
+)
 from trb_tax_pro.engine.dispatcher import MultiYearDispatcher
 from trb_tax_pro.parsers.ais_parser import AISParser
 
@@ -13,13 +18,29 @@ st.set_page_config(page_title="TRB Tax Pro | AIS Intelligence", layout="wide")
 st.title("CA Professional Tax Dashboard - AIS Intelligence")
 
 st.sidebar.header("Configuration")
-# 2026 Transition: Use "Tax Year" terminology
-tax_year = st.sidebar.selectbox("Select Tax Year (Income Tax Act, 2025)", ["ty2026", "fy2025_26"])
+
+# Dynamically load available tax years from the dispatcher
+available_years = sorted(list(MultiYearDispatcher._engines.keys()), reverse=True)
+tax_year = st.sidebar.selectbox("Select Tax Year", available_years)
+
+st.sidebar.markdown("---")
+st.sidebar.header("AIS Import")
+uploaded_file = st.sidebar.file_uploader("Upload AIS JSON File", type=["json"])
 
 st.header("AIS Reconciliation & Adjustment Table")
 
-# Load AIS Data into DataFrame
-ais_df = AISParser.parse_ais_to_dataframe("mock_ais.json")
+# Load AIS Data
+if uploaded_file is not None:
+    # Save uploaded file to a temporary location for the parser
+    temp_path = "temp_ais.json"
+    with open(temp_path, "wb") as f:
+        f.write(uploaded_file.getbuffer())
+    ais_df = AISParser.parse_ais_to_dataframe(temp_path)
+    st.success(f"Successfully imported: {uploaded_file.name}")
+else:
+    # Fallback to mock data if no file is uploaded
+    ais_df = AISParser.parse_ais_to_dataframe("mock_ais.json")
+    st.info("Using mock AIS data. Upload a JSON file in the sidebar to use real data.")
 
 st.markdown("Review the raw AIS data and provide adjustments. The **Corrected Amount** will be used for the final Unified Tax Computation.")
 
@@ -32,7 +53,7 @@ edited_df = st.data_editor(
         "CA Adjustment": st.column_config.NumberColumn("CA Adjustment (INR)", format="%.2f", step=1000.0),
         "Notes": st.column_config.TextColumn("Notes / Justification")
     },
-    use_container_width=True,
+    width="stretch",
     num_rows="fixed",
     hide_index=True
 )
@@ -45,7 +66,7 @@ final_df["Corrected Amount"] = final_df["AIS Amount"] + final_df["CA Adjustment"
 
 st.dataframe(
     final_df[["Category", "AIS Amount", "CA Adjustment", "Corrected Amount", "Notes"]], 
-    use_container_width=True, 
+    width="stretch", 
     hide_index=True
 )
 

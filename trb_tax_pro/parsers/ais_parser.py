@@ -27,10 +27,18 @@ class AISParser:
             ])
             
         with open(filepath, "r") as f:
+            content = f.read().strip()
             try:
-                data = json.load(f)
-            except json.JSONDecodeError:
-                raise ValueError("Malformed AIS JSON file provided.")
+                data = json.loads(content)
+            except json.JSONDecodeError as e:
+                # Detect encrypted portal format (64-char hex prefix + Base64)
+                if len(content) > 64 and all(c in '0123456789abcdefABCDEF' for c in content[:64]):
+                    raise ValueError(
+                        "This file appears to be an Encrypted AIS JSON. "
+                        "Please upload the unzipped/decrypted JSON file found inside the "
+                        "password-protected ZIP downloaded from the Income Tax Portal (password is PAN in CAPS + DOB)."
+                    )
+                raise ValueError(f"Malformed AIS JSON file provided: {str(e)}")
             
         rows = []
         
