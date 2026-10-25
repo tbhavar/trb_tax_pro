@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "trb-tax-pro"
-version = "1.1.2"
+version = "1.2.0"
 description = "A CA-grade Income Tax calculation engine for India (FY 2025-26) with AIS reconciliation and support for the Income Tax Act, 2025."
 readme = "README.md"
 authors = [
@@ -33,3 +33,7 @@ dev = [
     "pytest>=7.0.0",
     "mypy>=1.0.0"
 ]
+
+
+[tool.setuptools.packages.find]
+include = ["trb_tax_pro*"]

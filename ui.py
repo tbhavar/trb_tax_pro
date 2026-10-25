@@ -345,7 +345,7 @@ with st.sidebar:
     st.markdown(
         """
         <div style="font-size: 0.8rem; color: #64748b; text-align: center;">
-            <strong>TRB Tax Pro v1.1.2</strong><br>
+            <strong>TRB Tax Pro v1.2.0</strong><br>
             Developed for Chartered Accountants & Tax Practitioners.<br>
             <a href="https://buymeacoffee.com/tbhavar" target="_blank" style="color: #2563eb; text-decoration: none; font-weight: 600;">☕ Support Developer</a>
         </div>
